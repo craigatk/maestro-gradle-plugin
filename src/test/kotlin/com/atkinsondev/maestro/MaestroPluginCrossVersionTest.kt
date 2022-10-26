@@ -23,7 +23,7 @@ class MaestroPluginCrossVersionTest {
         val buildFileContents = """
             ${baseBuildFileContents()}
             
-            task maestroTests(type: com.atkinsondev.maestro.MaestroTestsTask) {
+            task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
                 flowsDir = file("${flowsDir.absolutePath}")
             
                 maestroExecutable = "echo"
@@ -34,7 +34,7 @@ class MaestroPluginCrossVersionTest {
 
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTests", "--info", "--stacktrace")
+            .withArguments("maestroTest", "--info", "--stacktrace")
             .withGradleVersion(gradleVersion)
             .withPluginClasspath()
             .build()

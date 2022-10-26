@@ -6,18 +6,15 @@ That way you can verify the different components of your application do work tog
 you're expecting.
 
 Currently the `maestro test` CLI command only supports running one flow YAML file at a time.
-I don't know about you, but I'm too lazy to run all my individual test files by hand and would forget to add
-tests if I had a list of them to maintain.
+Is there a way you use Gradle to run all your Maestro tests in a single Gradle command and integrate your Maestro tests with the rest of your Gradle build?
 
-Can you use Gradle to run all your Maestro tests in a single Gradle command?
-
-Yes! That's what this plugin provides - a Gradle task to conveniently run all your Maestro tests.
+Yes! That's what this plugin provides - a Gradle task to conveniently run all your Maestro tests and integrate them with your Gradle build.
 
 Note: this is an unofficial plugin with no association with mobile.dev
 
 ## Usage
 
-The plugin provides a new task type `com.atkinsondev.maestro.MaestroTestsTask` that lets you seamlessly run
+The plugin provides a new task type `com.atkinsondev.maestro.MaestroTest` that lets you seamlessly run
 all your Maestro flow files in a given directory.
 
 To use it, first add the plugin to your `build.gradle` file's `plugins` block:
@@ -31,15 +28,27 @@ plugins {
 Next, add a task to your build file such as the following - replacing "src/maestro/flows" with the directory containing your flow files:
 
 ```groovy
-task maestroTests(type: com.atkinsondev.maestro.MaestroTestsTask) {
+task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
     flowsDir = file("src/maestro/flows")
 }
 ```
 
-Now you can run all your Maestro tests with a single Gradle command:
+Then you can run all your Maestro tests with a single Gradle command:
 
 ```shell
-./gradlew maestroTests
+./gradlew maestroTest
+```
+
+And now that you have a Gradle task for running your Maestro tests, you can integrate your Maestro tests in your
+existing Gradle build lifecycle.
+
+For example, to run your Maestro tests as part of the `check` task and ensure your tests aren't run until the
+updated app is built, you can add this to your `build.gradle` file:
+
+```groovy
+maestroTest.dependsOn('packageDebugAndroidTest')
+
+check.dependsOn('maestroTest')
 ```
 
 ### Screenshots on test failure
@@ -50,7 +59,7 @@ In the browser testing world, it's common to take screenshots when a test fails 
 Maestro doesn't yet have that type of capability, but this Gradle Maestro task supports it with an additional parameter:
 
 ```groovy
-task maestroTests(type: com.atkinsondev.maestro.MaestroTestsTask) {
+task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
     flowsDir = file("src/maestro/flows")
 
     screenshotFlowFile = file("src/maestro/screenshot.yml")

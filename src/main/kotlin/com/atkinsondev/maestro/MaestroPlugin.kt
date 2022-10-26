@@ -5,6 +5,6 @@ import org.gradle.api.Project
 
 class MaestroPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        // Use the MaestroTestsTask in your build
+        // Use the MaestroTest task in your build
     }
 }

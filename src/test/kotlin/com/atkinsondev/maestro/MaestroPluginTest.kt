@@ -21,7 +21,7 @@ class MaestroPluginTest {
         val buildFileContents = """
             ${baseBuildFileContents()}
             
-            task maestroTests(type: com.atkinsondev.maestro.MaestroTestsTask) {
+            task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
                 flowsDir = file("${flowsDir.absolutePath}")
             
                 maestroExecutable = "echo"
@@ -32,7 +32,7 @@ class MaestroPluginTest {
 
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTests", "--info", "--stacktrace")
+            .withArguments("maestroTest", "--info", "--stacktrace")
             .withPluginClasspath()
             .build()
 
@@ -54,7 +54,7 @@ class MaestroPluginTest {
         val buildFileContents = """
             ${baseBuildFileContents()}
             
-            task maestroTests(type: com.atkinsondev.maestro.MaestroTestsTask) {
+            task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
                 flowsDir = file("${flowsDir.absolutePath}")
                 
                 screenshotFlowFile = file("${screenshotFlowFile.absolutePath}")
@@ -67,7 +67,7 @@ class MaestroPluginTest {
 
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTests", "--info", "--stacktrace")
+            .withArguments("maestroTest", "--info", "--stacktrace")
             .withPluginClasspath()
             .buildAndFail()
 
