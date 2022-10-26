@@ -1,5 +1,6 @@
-# maestro-gradle-plugin
-Gradle plugin for executing Maestro tests
+# Maestro Gradle plugin
+
+Note: this is an unofficial plugin with no association with mobile.dev
 
 ## Usage
 
@@ -12,3 +13,12 @@ task maestroTest(type: com.atkinsondev.maestro.MaestroTestsTask) {
     screenshotFlowFile = file("src/maestro/screenshot.yml")
 }
 ```
+
+## Compatibility
+
+The plugin is compatible with Gradle versions `6.1.1` and higher.
+
+## Changelog
+
+* 1.0.0
+    * Initial release
