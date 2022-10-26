@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "com.atkinsondev"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 gradlePlugin {
     plugins {
