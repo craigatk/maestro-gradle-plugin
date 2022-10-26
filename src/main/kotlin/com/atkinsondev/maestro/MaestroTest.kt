@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-abstract class MaestroTestsTask : DefaultTask() {
+abstract class MaestroTest : DefaultTask() {
     @get:Input
     abstract val flowsDir: Property<File>
 
