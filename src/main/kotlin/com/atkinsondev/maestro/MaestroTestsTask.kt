@@ -28,7 +28,7 @@ abstract class MaestroTestsTask : DefaultTask() {
         val maestroExecutable = maestroExecutable.get()
 
         try {
-            val flowsDir = flowsDirProp// File(project.projectDir, flowsDirProp)
+            val flowsDir = flowsDirProp // File(project.projectDir, flowsDirProp)
 
             val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
 
@@ -41,7 +41,6 @@ abstract class MaestroTestsTask : DefaultTask() {
                     it.setCommandLine(maestroExecutable, "test", flowFile.name)
                 }
             }
-
         } catch (e: Exception) {
             val screenshotFlowFile = screenshotFlowFile.orNull
 
