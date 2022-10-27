@@ -46,7 +46,7 @@ For example, to run your Maestro tests as part of the `check` task and ensure yo
 updated app is built, you can add this to your `build.gradle` file:
 
 ```groovy
-maestroTest.dependsOn('packageDebugAndroidTest')
+maestroTest.dependsOn('installDebugAndroidTest')
 
 check.dependsOn('maestroTest')
 ```
