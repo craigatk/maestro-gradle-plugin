@@ -21,7 +21,7 @@ To use it, first add the plugin to your `build.gradle` file's `plugins` block:
 
 ```
 plugins {
-  id 'com.atkinsondev.maestro' version "1.0.0"
+  id 'com.atkinsondev.maestro' version "1.0.1"
 }
 ```
 
@@ -91,5 +91,7 @@ The plugin is compatible with Gradle versions `6.1.1` and higher.
 
 ## Changelog
 
+* 1.0.1
+  * Adding info log of Maestro command that's being run
 * 1.0.0
     * Initial release
