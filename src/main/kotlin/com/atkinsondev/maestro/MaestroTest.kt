@@ -24,21 +24,23 @@ abstract class MaestroTest : DefaultTask() {
 
     @TaskAction
     fun runTests() {
-        val flowsDirProp = flowsDir.get()
+        val flowsDir = flowsDir.get()
         val maestroExecutable = maestroExecutable.get()
 
         try {
-            val flowsDir = flowsDirProp // File(project.projectDir, flowsDirProp)
-
             val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
 
             project.logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
 
             flowFiles?.forEach { flowFile ->
                 project.exec {
-                    it.setWorkingDir(flowsDir)
+                    it.workingDir = flowsDir
 
-                    it.setCommandLine(maestroExecutable, "test", flowFile.name)
+                    val maestroCommandLine = listOf(maestroExecutable, "test", flowFile.name)
+
+                    project.logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
+
+                    it.commandLine = maestroCommandLine
                 }
             }
         } catch (e: Exception) {

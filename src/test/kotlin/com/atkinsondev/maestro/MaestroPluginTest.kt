@@ -39,6 +39,8 @@ class MaestroPluginTest {
         expectThat(buildResult.output).contains("test flow1.yml")
         expectThat(buildResult.output).contains("test flow2.yml")
         expectThat(buildResult.output).contains("test flow3.yml")
+
+        expectThat(buildResult.output).contains("Running Maestro command echo test flow1.yml")
     }
 
     @Test
