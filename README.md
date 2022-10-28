@@ -25,6 +25,8 @@ plugins {
 }
 ```
 
+Please see the Gradle plugin portal for the latest version: https://plugins.gradle.org/plugin/com.atkinsondev.maestro
+
 Next, add a task to your build file such as the following - replacing "src/maestro/flows" with the directory containing your flow files:
 
 ```groovy
