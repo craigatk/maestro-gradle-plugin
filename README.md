@@ -83,7 +83,7 @@ Now when a test fails, the task will take a screenshot of the current app screen
 | Parameter          | Type                | Default                          | Description                                                     |
 | ------------------ | ------------------- | -------------------------------- | --------------------------------------------------------------- |
 | flowsDir**         | `File`              | `null`                           | Directory containing your Maestro test flow YAML files          |
-| screenshotFlowFile | `File`              | `null`                           | Headers to pass to the OpenTelemetry server, such as an API key |
+| screenshotFlowFile | `File`              | `null`                           | Path to a Maestro flow that will take a screenshot of the app, if set will be executed if a test fails |
 
 ** _Required_
 
