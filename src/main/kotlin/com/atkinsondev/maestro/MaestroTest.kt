@@ -1,6 +1,8 @@
 package com.atkinsondev.maestro
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -13,11 +15,11 @@ abstract class MaestroTest @Inject constructor(
     private val execOperations: ExecOperations,
 ) : DefaultTask() {
     @get:Input
-    abstract val flowsDir: Property<File>
+    abstract val flowsDir: DirectoryProperty
 
     @get:Input
     @get:Optional
-    abstract val screenshotFlowFile: Property<File>
+    abstract val screenshotFlowFile: RegularFileProperty
 
     @get:Input
     abstract val maestroExecutable: Property<String>
@@ -28,7 +30,7 @@ abstract class MaestroTest @Inject constructor(
 
     @TaskAction
     fun runTests() {
-        val flowsDir = flowsDir.get()
+        val flowsDir = flowsDir.get().asFile
         val maestroExecutable = maestroExecutable.get()
 
         try {
@@ -48,7 +50,7 @@ abstract class MaestroTest @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            val screenshotFlowFile = screenshotFlowFile.orNull
+            val screenshotFlowFile = screenshotFlowFile.asFile.orNull
 
             if (screenshotFlowFile != null) {
                 logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
