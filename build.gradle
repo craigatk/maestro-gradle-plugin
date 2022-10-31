@@ -34,6 +34,7 @@ pluginBundle {
 }
 
 dependencies {
+    compileOnly("javax.inject:javax.inject:1")
     testImplementation gradleTestKit()
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

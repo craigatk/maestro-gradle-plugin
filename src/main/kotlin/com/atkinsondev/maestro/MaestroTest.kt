@@ -5,9 +5,13 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import java.io.File
+import javax.inject.Inject
 
-abstract class MaestroTest : DefaultTask() {
+abstract class MaestroTest @Inject constructor(
+    private val execOperations: ExecOperations,
+) : DefaultTask() {
     @get:Input
     abstract val flowsDir: Property<File>
 
@@ -33,7 +37,7 @@ abstract class MaestroTest : DefaultTask() {
             project.logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
 
             flowFiles?.forEach { flowFile ->
-                project.exec {
+                execOperations.exec {
                     it.workingDir = flowsDir
 
                     val maestroCommandLine = listOf(maestroExecutable, "test", flowFile.name)
@@ -49,7 +53,7 @@ abstract class MaestroTest : DefaultTask() {
             if (screenshotFlowFile != null) {
                 project.logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
 
-                project.exec {
+                execOperations.exec {
                     it.setCommandLine(maestroExecutable, "test", screenshotFlowFile.absolutePath)
                 }
             }
