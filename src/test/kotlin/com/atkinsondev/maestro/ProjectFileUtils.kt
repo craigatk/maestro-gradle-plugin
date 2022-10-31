@@ -1,6 +1,6 @@
 package com.atkinsondev.maestro
 
-fun baseBuildFileContents(): String = """
+fun baseBuildFileContents(additionalPlugins: String = ""): String = """
     buildscript {
         repositories {
             gradlePluginPortal()
@@ -10,6 +10,7 @@ fun baseBuildFileContents(): String = """
     
     plugins {
         id "com.atkinsondev.maestro"
+        $additionalPlugins
     }
     
     repositories {

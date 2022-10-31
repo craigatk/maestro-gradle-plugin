@@ -21,7 +21,7 @@ To use it, first add the plugin to your `build.gradle` file's `plugins` block:
 
 ```
 plugins {
-  id 'com.atkinsondev.maestro' version "1.0.1"
+  id 'com.atkinsondev.maestro' version "1.1.1"
 }
 ```
 
@@ -93,6 +93,8 @@ The plugin is compatible with Gradle versions `6.1.1` and higher.
 
 ## Changelog
 
+* 1.1.1
+  * Updating parameter type for `flowsDir` to `InputFiles`
 * 1.1.0
   * Adding support for Gradle's configuration cache
 * 1.0.1
