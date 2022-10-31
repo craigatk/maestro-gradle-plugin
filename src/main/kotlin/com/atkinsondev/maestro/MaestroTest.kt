@@ -8,7 +8,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import java.io.File
 import javax.inject.Inject
 
 abstract class MaestroTest @Inject constructor(

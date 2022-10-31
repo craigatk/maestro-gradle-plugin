@@ -93,6 +93,8 @@ The plugin is compatible with Gradle versions `6.1.1` and higher.
 
 ## Changelog
 
+* 1.1.0
+  * Adding support for Gradle's configuration cache
 * 1.0.1
   * Adding info log of Maestro command that's being run
 * 1.0.0
