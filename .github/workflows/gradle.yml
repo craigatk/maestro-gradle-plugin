@@ -1,6 +1,10 @@
 name: Gradle check
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   gradle-build:

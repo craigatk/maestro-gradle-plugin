@@ -32,7 +32,7 @@ class MaestroPluginTest {
 
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTest", "--info", "--stacktrace")
+            .withArguments("maestroTest", "--info", "--stacktrace", "--configuration-cache")
             .withPluginClasspath()
             .build()
 
@@ -69,7 +69,7 @@ class MaestroPluginTest {
 
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTest", "--info", "--stacktrace")
+            .withArguments("maestroTest", "--info", "--stacktrace", "--configuration-cache")
             .withPluginClasspath()
             .buildAndFail()
 

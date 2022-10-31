@@ -1,19 +1,25 @@
 package com.atkinsondev.maestro
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import java.io.File
+import javax.inject.Inject
 
-abstract class MaestroTest : DefaultTask() {
+abstract class MaestroTest @Inject constructor(
+    private val execOperations: ExecOperations,
+) : DefaultTask() {
     @get:Input
-    abstract val flowsDir: Property<File>
+    abstract val flowsDir: DirectoryProperty
 
     @get:Input
     @get:Optional
-    abstract val screenshotFlowFile: Property<File>
+    abstract val screenshotFlowFile: RegularFileProperty
 
     @get:Input
     abstract val maestroExecutable: Property<String>
@@ -24,32 +30,32 @@ abstract class MaestroTest : DefaultTask() {
 
     @TaskAction
     fun runTests() {
-        val flowsDir = flowsDir.get()
+        val flowsDir = flowsDir.get().asFile
         val maestroExecutable = maestroExecutable.get()
 
         try {
             val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
 
-            project.logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
+            logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
 
             flowFiles?.forEach { flowFile ->
-                project.exec {
+                execOperations.exec {
                     it.workingDir = flowsDir
 
                     val maestroCommandLine = listOf(maestroExecutable, "test", flowFile.name)
 
-                    project.logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
+                    logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
 
                     it.commandLine = maestroCommandLine
                 }
             }
         } catch (e: Exception) {
-            val screenshotFlowFile = screenshotFlowFile.orNull
+            val screenshotFlowFile = screenshotFlowFile.asFile.orNull
 
             if (screenshotFlowFile != null) {
-                project.logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
+                logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
 
-                project.exec {
+                execOperations.exec {
                     it.setCommandLine(maestroExecutable, "test", screenshotFlowFile.absolutePath)
                 }
             }
