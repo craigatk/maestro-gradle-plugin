@@ -1,6 +1,7 @@
 package com.atkinsondev.maestro
 
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -32,9 +33,15 @@ class MaestroPluginCrossVersionTest {
 
         File(projectRootDirPath.toFile(), "build.gradle").writeText(buildFileContents)
 
+        // Configuration Cache was introduced in Gradle 6.6, don't try to enable it on older versions.
+        val arguments = arrayListOf("maestroTest", "--info", "--stacktrace")
+        if (GradleVersion.version(gradleVersion) >= GradleVersion.version("6.6")) {
+            arguments.add("--configuration-cache")
+        }
+
         val buildResult = GradleRunner.create()
             .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTest", "--info", "--stacktrace")
+            .withArguments(arguments)
             .withGradleVersion(gradleVersion)
             .withPluginClasspath()
             .build()
