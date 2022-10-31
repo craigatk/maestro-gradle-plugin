@@ -34,7 +34,7 @@ abstract class MaestroTest @Inject constructor(
         try {
             val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
 
-            project.logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
+            logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
 
             flowFiles?.forEach { flowFile ->
                 execOperations.exec {
@@ -42,7 +42,7 @@ abstract class MaestroTest @Inject constructor(
 
                     val maestroCommandLine = listOf(maestroExecutable, "test", flowFile.name)
 
-                    project.logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
+                    logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
 
                     it.commandLine = maestroCommandLine
                 }
@@ -51,7 +51,7 @@ abstract class MaestroTest @Inject constructor(
             val screenshotFlowFile = screenshotFlowFile.orNull
 
             if (screenshotFlowFile != null) {
-                project.logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
+                logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
 
                 execOperations.exec {
                     it.setCommandLine(maestroExecutable, "test", screenshotFlowFile.absolutePath)
