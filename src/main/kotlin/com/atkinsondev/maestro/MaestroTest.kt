@@ -5,7 +5,10 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import javax.inject.Inject
@@ -13,7 +16,8 @@ import javax.inject.Inject
 abstract class MaestroTest @Inject constructor(
     private val execOperations: ExecOperations,
 ) : DefaultTask() {
-    @get:Input
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val flowsDir: DirectoryProperty
 
     @get:Input
