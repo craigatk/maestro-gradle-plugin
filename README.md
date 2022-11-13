@@ -21,7 +21,7 @@ To use it, first add the plugin to your `build.gradle` file's `plugins` block:
 
 ```
 plugins {
-  id 'com.atkinsondev.maestro' version "1.1.1"
+  id 'com.atkinsondev.maestro' version "1.1.2"
 }
 ```
 
