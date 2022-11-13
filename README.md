@@ -93,6 +93,8 @@ The plugin is compatible with Gradle versions `6.1.1` and higher.
 
 ## Changelog
 
+* 1.1.2
+  * Publishing with version `1.1.0` of the Gradle publish plugin
 * 1.1.1
   * Updating parameter type for `flowsDir` to `InputFiles`
 * 1.1.0
