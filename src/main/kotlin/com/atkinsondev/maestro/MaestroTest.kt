@@ -3,6 +3,7 @@ package com.atkinsondev.maestro
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -25,6 +26,10 @@ abstract class MaestroTest @Inject constructor(
     abstract val screenshotFlowFile: RegularFileProperty
 
     @get:Input
+    @get:Optional
+    abstract val flowParameters: MapProperty<String, String>
+
+    @get:Input
     abstract val maestroExecutable: Property<String>
 
     init {
@@ -34,7 +39,6 @@ abstract class MaestroTest @Inject constructor(
     @TaskAction
     fun runTests() {
         val flowsDir = flowsDir.get().asFile
-        val maestroExecutable = maestroExecutable.get()
 
         try {
             val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
@@ -45,7 +49,7 @@ abstract class MaestroTest @Inject constructor(
                 execOperations.exec {
                     it.workingDir = flowsDir
 
-                    val maestroCommandLine = listOf(maestroExecutable, "test", flowFile.name)
+                    val maestroCommandLine = maestroExecutableWithOptionalParameters() + listOf("test", flowFile.name)
 
                     logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
 
@@ -59,11 +63,24 @@ abstract class MaestroTest @Inject constructor(
                 logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
 
                 execOperations.exec {
-                    it.setCommandLine(maestroExecutable, "test", screenshotFlowFile.absolutePath)
+                    val maestroCommandLine = maestroExecutableWithOptionalParameters() + listOf("test", screenshotFlowFile.absolutePath)
+
+                    it.commandLine = maestroCommandLine
                 }
             }
 
             throw e
         }
+    }
+
+    private fun maestroExecutableWithOptionalParameters(): List<String> {
+        val maestroExecutable = maestroExecutable.get()
+        val parameterMap = flowParameters.getOrElse(mapOf())
+
+        val parameters = parameterMap.flatMap {
+            listOf("-e", it.key, it.value)
+        }
+
+        return listOf(maestroExecutable) + parameters
     }
 }

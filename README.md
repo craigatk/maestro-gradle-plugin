@@ -1,14 +1,17 @@
 # Maestro Gradle plugin
 
-[Maestro](https://maestro.mobile.dev/) lets you write high-level tests (or "flows" in Maestro terminology) that interact with your app the same way as your users.
+[Maestro](https://maestro.mobile.dev/) lets you write high-level tests (or "flows" in Maestro terminology) that interact
+with your app the same way as your users.
 Tapping on the screen, entering text using the keyboard, etc.
 That way you can verify the different components of your application do work together to deliver the user experience
 you're expecting.
 
 Currently the `maestro test` CLI command only supports running one flow YAML file at a time.
-Is there a way you use Gradle to run all your Maestro tests in a single Gradle command and integrate your Maestro tests with the rest of your Gradle build?
+Is there a way you use Gradle to run all your Maestro tests in a single Gradle command and integrate your Maestro tests
+with the rest of your Gradle build?
 
-Yes! That's what this plugin provides - a Gradle task to conveniently run all your Maestro tests and integrate them with your Gradle build.
+Yes! That's what this plugin provides - a Gradle task to conveniently run all your Maestro tests and integrate them with
+your Gradle build.
 
 Note: this is an unofficial plugin with no association with mobile.dev
 
@@ -21,13 +24,14 @@ To use it, first add the plugin to your `build.gradle` file's `plugins` block:
 
 ```
 plugins {
-  id 'com.atkinsondev.maestro' version "1.1.2"
+  id 'com.atkinsondev.maestro' version "1.2.0"
 }
 ```
 
 Please see the Gradle plugin portal for the latest version: https://plugins.gradle.org/plugin/com.atkinsondev.maestro
 
-Next, add a task to your build file such as the following - replacing "src/maestro/flows" with the directory containing your flow files:
+Next, add a task to your build file such as the following - replacing "src/maestro/flows" with the directory containing
+your flow files:
 
 ```groovy
 task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
@@ -76,14 +80,34 @@ appId: com.atkinsondev.weeklygoals
 - takeScreenshot: build/maestro-failure-screenshot
 ```
 
-Now when a test fails, the task will take a screenshot of the current app screen and place it in the file `build/maestro-failure-screenshot.png`
+Now when a test fails, the task will take a screenshot of the current app screen and place it in the
+file `build/maestro-failure-screenshot.png`
+
+### Flow parameters
+
+Maestro supports passing external parameters to your flows via the `-e` parameter to the `maestro test` command - [Maestro docs](https://maestro.mobile.dev/advanced/parameters-and-constants)
+
+You can specify a map of parameter key/value pairs in the plugin configuration with the `flowParameters` plugin parameter:
+
+```groovy
+task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
+    flowsDir = file("src/maestro/flows")
+
+    flowParameters = ["key1": "val1", "key2": "val2"]
+}
+```
+
+Then the plugin will pass those key/values to the Maestro tests via `-e key1 val1 -e key2 val2`
+
+Note: these parameters will get passed to all flow files in `flowsDir`.
 
 ### All configuration options
 
-| Parameter          | Type                | Default                          | Description                                                     |
-| ------------------ | ------------------- | -------------------------------- | --------------------------------------------------------------- |
-| flowsDir**         | `File`              | `null`                           | Directory containing your Maestro test flow YAML files          |
-| screenshotFlowFile | `File`              | `null`                           | Path to a Maestro flow that will take a screenshot of the app, if set will be executed if a test fails |
+| Parameter          | Type                  | Default | Description                                                                                            |
+|--------------------|-----------------------|---------|--------------------------------------------------------------------------------------------------------|
+| flowsDir**         | `File`                | `null`  | Directory containing your Maestro test flow YAML files                                                 |
+| screenshotFlowFile | `File`                | `null`  | Path to a Maestro flow that will take a screenshot of the app, if set will be executed if a test fails |
+| flowParameters     | `Map<String, String>` | `null`  | Map of parameter key/values to pass to the Maestro command with the `-e` parameter                     |
 
 ** _Required_
 
@@ -93,13 +117,15 @@ The plugin is compatible with Gradle versions `6.1.1` and higher.
 
 ## Changelog
 
+* 1.2.0
+    * Adding support for passing parameters to the Maestro test command with new `flowParameters` plugin parameter
 * 1.1.2
-  * Publishing with version `1.1.0` of the Gradle publish plugin
+    * Publishing with version `1.1.0` of the Gradle publish plugin
 * 1.1.1
-  * Updating parameter type for `flowsDir` to `InputFiles`
+    * Updating parameter type for `flowsDir` to `InputFiles`
 * 1.1.0
-  * Adding support for Gradle's configuration cache
+    * Adding support for Gradle's configuration cache
 * 1.0.1
-  * Adding info log of Maestro command that's being run
+    * Adding info log of Maestro command that's being run
 * 1.0.0
     * Initial release
