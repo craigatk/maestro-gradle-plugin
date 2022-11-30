@@ -12,7 +12,7 @@ import java.nio.file.Path
 
 class MaestroPluginTest {
     @Test
-    fun `should execute multiple Maestro flow files in directory`(@TempDir projectRootDirPath: Path) {
+    fun `should execute Maestro flow files in directory`(@TempDir projectRootDirPath: Path) {
         val flowsDir = File(projectRootDirPath.toFile(), "flows")
         flowsDir.mkdirs()
 
@@ -38,45 +38,7 @@ class MaestroPluginTest {
             .withPluginClasspath()
             .build()
 
-        expectThat(buildResult.output).contains("test flow1.yml")
-        expectThat(buildResult.output).contains("test flow2.yml")
-        expectThat(buildResult.output).contains("test flow3.yml")
-
-        expectThat(buildResult.output).contains("Running Maestro command echo test flow1.yml")
-    }
-
-    @Test
-    fun `when Maestro tests fail should run screenshot tests`(@TempDir projectRootDirPath: Path) {
-        val flowsDir = File(projectRootDirPath.toFile(), "flows")
-        flowsDir.mkdirs()
-
-        File(flowsDir, "flow1.yml").writeText(" ")
-
-        val screenshotFlowFile = File(flowsDir, "screenshot.yml")
-        screenshotFlowFile.writeText(" ")
-
-        val buildFileContents = """
-            ${baseBuildFileContents()}
-            
-            task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
-                flowsDir = file("${flowsDir.absolutePath}")
-                
-                screenshotFlowFile = file("${screenshotFlowFile.absolutePath}")
-            
-                maestroExecutable = "does-not-exist"
-            }
-        """.trimIndent()
-
-        File(projectRootDirPath.toFile(), "build.gradle").writeText(buildFileContents)
-
-        val buildResult = GradleRunner.create()
-            .withProjectDir(projectRootDirPath.toFile())
-            .withArguments("maestroTest", "--info", "--stacktrace", "--configuration-cache")
-            .withPluginClasspath()
-            .buildAndFail()
-
-        expectThat(buildResult.output).contains("Maestro tests failed, capturing screenshot with flow file")
-        expectThat(buildResult.output).contains("screenshot.yml")
+        expectThat(buildResult.output).contains("Running Maestro command echo test ${flowsDir.absolutePath}")
     }
 
     @Test

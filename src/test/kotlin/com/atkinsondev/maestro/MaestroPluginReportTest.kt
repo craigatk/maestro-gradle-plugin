@@ -6,13 +6,11 @@ import org.junit.jupiter.api.io.TempDir
 import strikt.api.expectThat
 import strikt.assertions.contains
 import java.io.File
-import java.nio.file.Path
 
-class MaestroPluginParametersTest {
-
+class MaestroPluginReportTest {
     @Test
-    fun `should execute Maestro tests with one parameter`(@TempDir projectRootDirPath: Path) {
-        val flowsDir = File(projectRootDirPath.toFile(), "flows")
+    fun `should support passing JUnit report parameter`(@TempDir projectRootDir: File) {
+        val flowsDir = File(projectRootDir, "flows")
         flowsDir.mkdirs()
 
         File(flowsDir, "flow1.yml").writeText(" ")
@@ -23,26 +21,26 @@ class MaestroPluginParametersTest {
             task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
                 flowsDir = file("${flowsDir.absolutePath}")
             
-                flowParameters = ["env1": "val1"]
+                generateJunitReport = true
             
                 maestroExecutable = "echo"
             }
         """.trimIndent()
 
-        File(projectRootDirPath.toFile(), "build.gradle").writeText(buildFileContents)
+        File(projectRootDir, "build.gradle").writeText(buildFileContents)
 
         val buildResult = GradleRunner.create()
-            .withProjectDir(projectRootDirPath.toFile())
+            .withProjectDir(projectRootDir)
             .withArguments("maestroTest", "--info", "--configuration-cache")
             .withPluginClasspath()
             .build()
 
-        expectThat(buildResult.output).contains("Running Maestro command echo -e env1 val1 test ${flowsDir.absolutePath}")
+        expectThat(buildResult.output).contains("Running Maestro command echo test --format junit ${flowsDir.absolutePath}")
     }
 
     @Test
-    fun `should execute Maestro tests with two parameters`(@TempDir projectRootDirPath: Path) {
-        val flowsDir = File(projectRootDirPath.toFile(), "flows")
+    fun `should support passing JUnit report parameter and report file name`(@TempDir projectRootDir: File) {
+        val flowsDir = File(projectRootDir, "flows")
         flowsDir.mkdirs()
 
         File(flowsDir, "flow1.yml").writeText(" ")
@@ -53,20 +51,23 @@ class MaestroPluginParametersTest {
             task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
                 flowsDir = file("${flowsDir.absolutePath}")
             
-                flowParameters = ["env1": "val1", "env2": "val2"]
+                generateJunitReport = true
+                junitReportFile = file("my-report.xml")
             
                 maestroExecutable = "echo"
             }
         """.trimIndent()
 
-        File(projectRootDirPath.toFile(), "build.gradle").writeText(buildFileContents)
+        File(projectRootDir, "build.gradle").writeText(buildFileContents)
 
         val buildResult = GradleRunner.create()
-            .withProjectDir(projectRootDirPath.toFile())
+            .withProjectDir(projectRootDir)
             .withArguments("maestroTest", "--info", "--configuration-cache")
             .withPluginClasspath()
+            .withDebug(true)
             .build()
 
-        expectThat(buildResult.output).contains("Running Maestro command echo -e env1 val1 -e env2 val2 test ${flowsDir.absolutePath}")
+        expectThat(buildResult.output).contains("Running Maestro command echo test --format junit --output")
+        expectThat(buildResult.output).contains("my-report.xml ${flowsDir.absolutePath}")
     }
 }

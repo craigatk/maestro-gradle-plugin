@@ -8,6 +8,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -23,11 +24,15 @@ abstract class MaestroTest @Inject constructor(
 
     @get:Input
     @get:Optional
-    abstract val screenshotFlowFile: RegularFileProperty
+    abstract val flowParameters: MapProperty<String, String>
 
     @get:Input
     @get:Optional
-    abstract val flowParameters: MapProperty<String, String>
+    abstract val generateJunitReport: Property<Boolean>
+
+    @get:OutputFile
+    @get:Optional
+    abstract val junitReportFile: RegularFileProperty
 
     @get:Input
     abstract val maestroExecutable: Property<String>
@@ -40,36 +45,15 @@ abstract class MaestroTest @Inject constructor(
     fun runTests() {
         val flowsDir = flowsDir.get().asFile
 
-        try {
-            val flowFiles = flowsDir.listFiles()?.filter { it.isFile }
+        execOperations.exec {
+            val maestroCommandLine = maestroExecutableWithOptionalParameters() +
+                listOf("test") +
+                junitReportParameters() +
+                listOf(flowsDir.absolutePath)
 
-            logger.info("Found ${flowFiles?.size ?: 0} flow files in directory ${flowsDir.absolutePath}")
+            logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
 
-            flowFiles?.forEach { flowFile ->
-                execOperations.exec {
-                    it.workingDir = flowsDir
-
-                    val maestroCommandLine = maestroExecutableWithOptionalParameters() + listOf("test", flowFile.name)
-
-                    logger.info("Running Maestro command ${maestroCommandLine.joinToString(" ")}")
-
-                    it.commandLine = maestroCommandLine
-                }
-            }
-        } catch (e: Exception) {
-            val screenshotFlowFile = screenshotFlowFile.asFile.orNull
-
-            if (screenshotFlowFile != null) {
-                logger.info("Maestro tests failed, capturing screenshot with flow file ${screenshotFlowFile.absolutePath}")
-
-                execOperations.exec {
-                    val maestroCommandLine = maestroExecutableWithOptionalParameters() + listOf("test", screenshotFlowFile.absolutePath)
-
-                    it.commandLine = maestroCommandLine
-                }
-            }
-
-            throw e
+            it.commandLine = maestroCommandLine
         }
     }
 
@@ -82,5 +66,21 @@ abstract class MaestroTest @Inject constructor(
         }
 
         return listOf(maestroExecutable) + parameters
+    }
+
+    private fun junitReportParameters(): List<String> {
+        val junitReport = generateJunitReport.getOrElse(false)
+
+        return if (junitReport) {
+            val reportFilePath = junitReportFile.orNull?.asFile?.absolutePath
+
+            if (reportFilePath != null) {
+                listOf("--format", "junit", "--output", reportFilePath)
+            } else {
+                listOf("--format", "junit")
+            }
+        } else {
+            listOf()
+        }
     }
 }
