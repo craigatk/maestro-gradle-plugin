@@ -6,11 +6,7 @@ Tapping on the screen, entering text using the keyboard, etc.
 That way you can verify the different components of your application do work together to deliver the user experience
 you're expecting.
 
-Currently the `maestro test` CLI command only supports running one flow YAML file at a time.
-Is there a way you use Gradle to run all your Maestro tests in a single Gradle command and integrate your Maestro tests
-with the rest of your Gradle build?
-
-Yes! That's what this plugin provides - a Gradle task to conveniently run all your Maestro tests and integrate them with
+This plugin provides a Gradle task to conveniently run all your Maestro tests and integrate them with
 your Gradle build.
 
 Note: this is an unofficial plugin with no association with mobile.dev
@@ -24,7 +20,7 @@ To use it, first add the plugin to your `build.gradle` file's `plugins` block:
 
 ```
 plugins {
-  id 'com.atkinsondev.maestro' version "1.2.0"
+  id 'com.atkinsondev.maestro' version "2.0.0"
 }
 ```
 
@@ -57,31 +53,30 @@ maestroTest.dependsOn('installDebugAndroidTest')
 check.dependsOn('maestroTest')
 ```
 
-### Screenshots on test failure
+### Generate test report
 
-The more information you have about a test failure, the faster it is to diagnose what went wrong.
-In the browser testing world, it's common to take screenshots when a test fails when using a tool like Cypress.
+Masetro supports generating test reports starting in Maestro version `1.15.0` - [Maestro test report docs](https://maestro.mobile.dev/cli/test-suites-and-reports).
 
-Maestro doesn't yet have that type of capability, but this Gradle Maestro task supports it with an additional parameter:
+To generate a JUnit report, set the plugin parameter `generateJunitReport` to `true`:
 
 ```groovy
 task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
     flowsDir = file("src/maestro/flows")
 
-    screenshotFlowFile = file("src/maestro/screenshot.yml")
+    generateJunitReport = true
 }
 ```
 
-And then create a `screenshot.yml` file similar to:
+You can also set a specific file name and path for the generated report using the `junitReportFile` parameter:
 
-```yaml
-appId: com.atkinsondev.weeklygoals
----
-- takeScreenshot: build/maestro-failure-screenshot
+```groovy
+task maestroTest(type: com.atkinsondev.maestro.MaestroTest) {
+    flowsDir = file("src/maestro/flows")
+
+    generateJunitReport = true
+    junitReportFile = file("build/maestro-report.xml")
+}
 ```
-
-Now when a test fails, the task will take a screenshot of the current app screen and place it in the
-file `build/maestro-failure-screenshot.png`
 
 ### Flow parameters
 
@@ -103,20 +98,29 @@ Note: these parameters will get passed to all flow files in `flowsDir`.
 
 ### All configuration options
 
-| Parameter          | Type                  | Default | Description                                                                                            |
-|--------------------|-----------------------|---------|--------------------------------------------------------------------------------------------------------|
-| flowsDir**         | `File`                | `null`  | Directory containing your Maestro test flow YAML files                                                 |
-| screenshotFlowFile | `File`                | `null`  | Path to a Maestro flow that will take a screenshot of the app, if set will be executed if a test fails |
-| flowParameters     | `Map<String, String>` | `null`  | Map of parameter key/values to pass to the Maestro command with the `-e` parameter                     |
+| Parameter           | Type                  | Default | Description                                                                                                         |
+|---------------------|-----------------------|---------|---------------------------------------------------------------------------------------------------------------------|
+| flowsDir**          | `File`                |         | Directory containing your Maestro test flow YAML files                                                              |
+| flowParameters      | `Map<String, String>` | `null`  | Map of parameter key/values to pass to the Maestro command with the `-e` parameter                                  |
+| generateJunitReport | `boolean`             | false   | Whether to pass the `--report junit` parameter to Maestro to generate a JUnit XML report file with the test results |
+| junitReportFile     | `File`                | `null`  | Output file for the JUnit report. The Maestro CLI defaults to `report.xml` in the current directory                 | 
 
 ** _Required_
 
 ## Compatibility
 
-The plugin is compatible with Gradle versions `6.1.1` and higher.
+The plugin is compatible with:
+
+* Maestro versions `1.15.0` and higher
+* Gradle versions `6.1.1` and higher
 
 ## Changelog
 
+* 2.0.0
+  * **BREAKING** plugin now requires Maestro 1.15.0 or higher
+  * **BREAKING** removing the screenshot-on-failure as it doesn't work when running tests in full directory. Will focus instead on getting the screenshot-on-failure capability into Maestro itself.
+  * Adding support for JUnit test report - [Maestro test report docs](https://maestro.mobile.dev/cli/test-suites-and-reports)
+  * Switching to use directory support in Maestro 1.15.0 to also support JUnit reports
 * 1.2.0
     * Adding support for passing parameters to the Maestro test command with new `flowParameters` plugin parameter
 * 1.1.2
