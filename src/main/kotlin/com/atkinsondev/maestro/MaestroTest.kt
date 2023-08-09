@@ -16,7 +16,7 @@ import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
 abstract class MaestroTest @Inject constructor(
-    private val execOperations: ExecOperations,
+    private val execOperations: ExecOperations
 ) : DefaultTask() {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
