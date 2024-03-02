@@ -1,11 +1,11 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id "org.jetbrains.kotlin.jvm" version "1.9.0"
+    id "org.jetbrains.kotlin.jvm" version "1.9.22"
     id "org.jlleitschuh.gradle.ktlint" version "11.5.1"
-    id "dev.projektor.publish" version "8.2.0"
+    id "dev.projektor.publish" version "8.7.0"
     id 'com.gradle.plugin-publish' version "1.2.0"
-    id "com.atkinsondev.opentelemetry-build" version "1.5.0"
+    id "com.atkinsondev.opentelemetry-build" version "1.9.1"
 }
 
 group = "com.atkinsondev"
@@ -32,7 +32,7 @@ dependencies {
     compileOnly("javax.inject:javax.inject:1")
     testImplementation gradleTestKit()
 
-    testImplementation(platform("org.junit:junit-bom:5.9.2"))
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     testImplementation("io.strikt:strikt-core:0.34.1")
